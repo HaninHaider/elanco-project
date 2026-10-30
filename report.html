@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report a Sighting - Elanco Tick Tracker</title>
+
+    <!-- Use the same Tailwind CSS as the main website -->
+    <link rel="stylesheet" href="./css/output.css">
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- ========================================
+         1. HEADER
+    ======================================== -->
+
+    <header class="bg-white border-b border-gray-200 px-6 py-4">
+
+        <h1 class="text-2xl font-bold text-blue-700">
+            Elanco Tick Tracker
+        </h1>
+
+    </header>
+
+    <!-- ========================================
+         2. REPORT A SIGHTING FORM
+    ======================================== -->
+
+    <main class="mx-auto max-w-3xl p-4">
+
+        <!-- Return to the interactive map -->
+        <a href="index.html"
+           class="mb-4 inline-block text-sm text-blue-700 underline">
+            Back to Map
+        </a>
+
+        <section class="rounded-xl border border-gray-200 bg-white p-6">
+
+            <h2 class="mb-2 text-xl font-semibold">
+                Report a Sighting
+            </h2>
+
+            <p class="mb-6 text-sm text-gray-600">
+                Spotted a tick? Submit the details below to help
+                track reported tick activity across the UK.
+            </p>
+
+            <form id="reportForm"
+                  class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+                <!-- 4(a). Date of the sighting -->
+                <label class="flex flex-col gap-2 text-sm">
+                    Date of Sighting
+
+                    <input type="date"
+                           id="reportDate"
+                           name="date"
+                           required
+                           class="rounded-lg border border-gray-300 p-3">
+                </label>
+
+                <!-- 4(a). Time of the sighting -->
+                <label class="flex flex-col gap-2 text-sm">
+                    Time of Sighting
+
+                    <input type="text"
+       id="reportTime"
+       name="time"
+       placeholder="HH:MM (e.g. 14:30)"
+       pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
+       title="Enter a valid time, for example 09:30 or 14:30"
+       maxlength="5"
+       required
+       class="rounded-lg border border-gray-300 p-3">
+                </label>
+
+                <!-- 4(a). Location of the sighting -->
+                <label class="flex flex-col gap-2 text-sm">
+                    Location
+
+                    <select id="reportLocation"
+                            name="location"
+                            required
+                            class="rounded-lg border border-gray-300 p-3">
+
+                        <option value="">Select a city</option>
+
+                        <!-- Cities will be added from the API -->
+
+                    </select>
+                </label>
+
+                <!-- 4(a). Tick species -->
+                <label class="flex flex-col gap-2 text-sm">
+                    Tick Species
+
+                    <select id="reportSpecies"
+                            name="species"
+                            required
+                            class="rounded-lg border border-gray-300 p-3">
+
+                        <option value="">Select a species</option>
+                        <option value="Unknown">Unknown</option>
+
+                        <!-- Species will be added from the API -->
+
+                    </select>
+                </label>
+
+                <!-- Form submission -->
+                <div class="sm:col-span-2">
+
+                    <button type="submit"
+                            id="submitSighting"
+                            disabled
+                            class="rounded-lg bg-gray-400 px-5 py-3 text-white">
+                        Submit Sighting
+                    </button>
+
+                    <!-- Validation and submission feedback -->
+                    <p id="reportMessage"
+                       role="status"
+                       class="mt-3 text-sm"></p>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

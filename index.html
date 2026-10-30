@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="./css/output.css">
+        <link href="https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.css"rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Elanco Tick Tracker</title>
+</head>
+<body>
+
+<header class="bg-white border-b border-black px-6 py-4">
+<h1 class="text-2xl font-bold text-blue-700">
+    Elanco Tick Tracker
+</h1>
+
+
+
+</header>
+
+   <!-- Filters for the sightings displayed on the map -->
+<section class="mx-4 mt-4 rounded-xl border border-gray-200 bg-white p-4">
+
+    <h2 class="mb-4 font-semibold">Filters</h2>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+
+        <!-- Date range -->
+        <label class="flex flex-col gap-2 text-sm">
+            Date range
+            <select id="dateFilter" class="rounded-lg border border-gray-300 p-2">
+                <option value="all">All dates</option>
+
+            </select>
+        </label>
+
+        <!-- Species options will come from Elanco's API -->
+        <label class="flex flex-col gap-2 text-sm">
+            Species
+            <select id="speciesFilter" class="rounded-lg border border-gray-300 p-2">
+                <option value="all">All species</option>
+            </select>
+        </label>
+
+        <!-- Calculated from reported sightings, not medical severity -->
+        <label class="flex flex-col gap-2 text-sm">
+            Reported activity
+            <select id="activityFilter" class="rounded-lg border border-gray-300 p-2">
+                <option value="all">All levels</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+        </label>
+
+    </div>
+</section>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
+
+   
+     <!-- 2. SIGHTING INFORMATION - SIDEBAR -->
+<aside class="lg:col-span-1 rounded-xl border border-gray-200 bg-white p-4">
+
+    <h2 class="mb-4 text-lg font-semibold">Tick Sightings</h2>
+
+    <!-- Show instructions until a city is selected -->
+    <p id="sightingPrompt" class="text-sm text-gray-500">
+        Click a marker on the map to view sighting details.
+    </p>
+
+    <!-- Hidden until the user selects a city -->
+    <div id="sightingPanel" class="hidden space-y-4">
+
+        <!-- Selected city and number of sightings -->
+        <div>
+            <h3 id="selectedCity" class="text-xl font-bold"></h3>
+            <p id="cityTotal" class="text-sm text-gray-600"></p>
+        </div>
+
+        <!-- Details of the latest matching sighting -->
+        <div class="rounded-lg bg-gray-50 p-3 text-sm">
+            <h4 class="mb-2 font-semibold">Latest sighting</h4>
+            <p>Date: <span id="latestDate"></span></p>
+            <p>Species: <span id="latestSpecies"></span></p>
+            <p>Latin name: <span id="latestLatin"></span></p>
+            <p>ID: <span id="latestId" class="break-all"></span></p>
+        </div>
+
+        <!-- Timeline of reported sightings in the city -->
+        <div>
+            <h4 class="mb-2 font-semibold">Activity timeline</h4>
+            <p class="mb-2 text-xs text-gray-500">
+                Reported sightings by year
+            </p>
+            <ol id="cityTimeline" class="space-y-2 text-sm"></ol>
+        </div>
+
+        <!-- Quick action buttons -->
+        <div class="flex flex-wrap gap-2">
+<!-- 2(c). Navigate to the report form -->
+<a href="report.html"
+   class="rounded-lg bg-blue-700 px-4 py-2 text-sm text-white">
+    Report a Sighting
+</a>
+
+            <button id="directionsButton"
+                    class="rounded-lg bg-blue-700 px-4 py-2 text-sm text-white cursor-pointer">
+                Get Directions
+            </button>
+
+            <button id="shareButton"
+                    class="rounded-lg border border-gray-300 px-4 py-2 text-sm cursor-pointer">
+                Share
+            </button>
+        </div>
+
+        <p id="shareStatus" role="status" class="text-xs text-gray-600"></p>
+
+        <p class="text-xs text-gray-500">
+            Locations are approximate city centres, not exact tick sighting locations.
+        </p>
+
+    </div>
+
+    </aside>
+
+    <!-- Interactive UK map -->
+<section class="lg:col-span-2">
+
+    <div id="map" class="w-full h-[500px] rounded-xl overflow-hidden"></div>
+
+    <!-- Legend explaining marker colours -->
+    <div class="flex flex-wrap items-center gap-5 mt-3 text-sm">
+
+        <span class="font-semibold">Reported Sightings:</span>
+
+        <!-- Low relative sighting count -->
+        <span class="flex items-center gap-2">
+            <span class="w-3 h-3 bg-green-600 rounded-full"></span>
+            Low
+        </span>
+
+        <!-- Medium relative sighting count -->
+        <span class="flex items-center gap-2">
+            <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+            Medium
+        </span>
+
+        <!-- High relative sighting count -->
+        <span class="flex items-center gap-2">
+            <span class="w-3 h-3 bg-red-600 rounded-full"></span>
+            High
+        </span>
+
+    </div>
+
+    <p class="mt-2 text-xs text-gray-500">
+        Colours compare reported sighting totals between cities
+    </p>
+
+</section>
+
+</div>
+
+<section class="mx-4 mb-6 rounded-xl border border-gray-200 bg-white p-5">
+
+    <h2 class="mb-4 text-lg font-semibold">Guidelines</h2>
+
+    <!-- 3(a). Species Identification Guide -->
+    <div class="mb-4">
+        <h3 class="font-medium">Tick Identification</h3>
+
+        <p class="mt-1 text-sm text-gray-600">
+            Learn how to recognise different tick species
+            and identify the differences between them.
+        </p>
+
+        <a href="https://www.gov.uk/guidance/tick-species-profiles"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="mt-2 inline-block text-sm text-blue-700 underline">
+            View Tick Identification Guide
+        </a>
+    </div>
+
+    <hr class="my-4 border-gray-200">
+
+    <!-- 3(b). Tick Prevention Guide -->
+    <div>
+        <h3 class="font-medium">Tick Prevention</h3>
+
+        <p class="mt-1 text-sm text-gray-600">
+            Find out how to protect yourself and your pets
+            from ticks, check for bites and remove ticks safely.
+        </p>
+
+        <a href="https://www.rspca.org.uk/adviceandwelfare/pets/general/ticks"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="mt-2 inline-block text-sm text-blue-700 underline">
+            Tick Prevention Guide for People and Pets – RSPCA
+        </a>
+
+          <a href="https://www.nhs.uk/conditions/lyme-disease/"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="mt-2 block text-sm text-blue-700 underline">
+        Lyme Disease Prevention and Symptoms – NHS
+        </a>
+    </div>
+
+</section>
+<!-- 3(c). SEASONAL ACTIVITY CHART -->
+<section class="mx-4 mb-6 rounded-xl border border-gray-200 bg-white p-5">
+
+    <h2 class="mb-2 text-lg font-semibold">Seasonal Tick Activity</h2>
+
+    <p class="mb-4 text-sm text-gray-600">
+        Explore the number of reported tick sightings each month.
+    </p>
+
+    <!-- Select a city and year -->
+    <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+        <label class="flex flex-col gap-2 text-sm">
+            UK City
+            <select id="chartCity" class="rounded-lg border border-gray-300 p-2">
+            </select>
+        </label>
+
+        <label class="flex flex-col gap-2 text-sm">
+            Year
+            <select id="chartYear" class="rounded-lg border border-gray-300 p-2">
+            </select>
+        </label>
+
+    </div>
+
+    <!-- Chart.js draws the monthly chart here -->
+    <div class="relative h-[300px] w-full">
+        <canvas id="seasonalChart"></canvas>
+    </div>
+
+    <!-- Summary of the selected city's sightings -->
+    <p id="chartStatus" role="status" class="mt-3 text-sm text-gray-600"></p>
+
+    <p class="mt-2 text-xs text-black">
+    </p>
+
+</section>
+<!-- Chart.js library for the seasonal activity chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+<script type="module" src="./main.js"></script>
+
+</body>
+</html>

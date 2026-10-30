@@ -1,0 +1,12 @@
+# Installed Node.js packages
+node_modules/
+
+# Private credentials
+.env
+.env.*
+!.env.example
+
+# Local database and uploaded images
+*.db
+*.sqlite
+uploads/
